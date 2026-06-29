@@ -53,6 +53,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["X-Request-ID"]
+)
 
 app.add_middleware(RateLimitMiddleware)
 app.add_middleware(RequestContextMiddleware)
