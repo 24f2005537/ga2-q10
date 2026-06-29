@@ -47,11 +47,11 @@ async def request_context_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     return response
 
-@app.middleware("http")
-async def debug_headers(request: Request, call_next):
-    print(f"DEBUG: Origin: {request.headers.get('origin')}")
-    print(f"DEBUG: Headers: {dict(request.headers)}")
-    return await call_next(request)
+# @app.middleware("http")
+# async def debug_headers(request: Request, call_next):
+#     print(f"DEBUG: Origin: {request.headers.get('origin')}")
+#     print(f"DEBUG: Headers: {dict(request.headers)}")
+#     return await call_next(request)
 
 @app.get("/ping", include_in_schema=False)
 @app.get("/ping")
