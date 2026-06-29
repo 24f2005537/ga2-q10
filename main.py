@@ -4,8 +4,7 @@ from collections import defaultdict
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-ALLOWED_ORIGIN = "https://app-07cips.example.com"
-ALLOWED_ORIGINS = [ALLOWED_ORIGIN, "http://localhost:8001", "sanand.workers.dev"] 
+ALLOWED_ORIGINS = ["https://app-07cips.example.com", "sanand.workers.dev"] 
 RATE_LIMIT_B = 11
 RATE_LIMIT_WINDOW = 10 
 
@@ -16,7 +15,7 @@ app.add_middleware(
     allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["X-Request-ID", "X-Client-Id"],
     expose_headers=["X-Request-ID"],
 )
 
@@ -46,6 +45,7 @@ async def request_context_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     return response
 
+@app.get("/ping", include_in_schema=False)
 @app.get("/ping")
 def ping(request: Request):
     return {
