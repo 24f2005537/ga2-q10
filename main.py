@@ -30,6 +30,23 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
 
 rate_limit_store = defaultdict(list)
 
+# class RateLimitMiddleware(BaseHTTPMiddleware):
+#     async def dispatch(self, request: Request, call_next):
+#         client_id = request.headers.get("X-Client-Id", "anonymous")
+#         now = time.time()
+        
+#         rate_limit_store[client_id] = [t for t in rate_limit_store[client_id] if now - t < WINDOW_SECONDS]
+        
+#         if len(rate_limit_store[client_id]) >= BUCKET_SIZE:
+#             return JSONResponse(
+#                 status_code=429,
+#                 content={"detail": "Rate limit exceeded"},
+#                 headers={"Retry-After": str(WINDOW_SECONDS)}
+#             )
+        
+#         rate_limit_store[client_id].append(now)
+#         return await call_next(request)
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         client_id = request.headers.get("X-Client-Id", "anonymous")
@@ -38,15 +55,24 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         rate_limit_store[client_id] = [t for t in rate_limit_store[client_id] if now - t < WINDOW_SECONDS]
         
         if len(rate_limit_store[client_id]) >= BUCKET_SIZE:
-            return JSONResponse(
+            response = JSONResponse(
                 status_code=429,
-                content={"detail": "Rate limit exceeded"},
-                headers={"Retry-After": str(WINDOW_SECONDS)}
+                content={"detail": "Rate limit exceeded"}
             )
+            
+            response.headers["Retry-After"] = str(WINDOW_SECONDS)
+            
+            origin = request.headers.get("Origin")
+            if origin in ALLOWED_ORIGINS:
+                response.headers["Access-Control-Allow-Origin"] = origin
+                response.headers["Access-Control-Allow-Methods"] = "*"
+                response.headers["Access-Control-Allow-Headers"] = "*"
+                
+            return response
         
         rate_limit_store[client_id].append(now)
         return await call_next(request)
-
+        
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
