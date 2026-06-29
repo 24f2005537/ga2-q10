@@ -4,7 +4,7 @@ from collections import defaultdict
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-ALLOWED_ORIGINS = ["https://app-07cips.example.com", "sanand.workers.dev"] 
+ALLOWED_ORIGINS = ["https://app-07cips.example.com", "https://exam.sanand.workers.dev"] 
 RATE_LIMIT_B = 11
 RATE_LIMIT_WINDOW = 10 
 
@@ -12,12 +12,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=ALLOWED_ORIGINS,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    # allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    # allow_headers=["X-Request-ID", "X-Client-Id"],
-    allow_headers=["*"],
+    allow_headers=["X-Request-ID", "X-Client-Id"],
+    # allow_headers=["*"],
     expose_headers=["X-Request-ID"],
 )
 
