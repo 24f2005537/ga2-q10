@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 ALLOWED_ORIGIN = "https://app-07cips.example.com"
-ALLOWED_ORIGINS = [ALLOWED_ORIGIN, "http://localhost:8001"] 
+ALLOWED_ORIGINS = [ALLOWED_ORIGIN, "http://localhost:8001", "sanand.workers.dev"] 
 RATE_LIMIT_B = 11
 RATE_LIMIT_WINDOW = 10 
 
@@ -13,7 +13,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
